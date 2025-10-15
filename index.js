@@ -1,31 +1,48 @@
-// steps  to define     express server
-//  load 
-require('dotenv').config()
-const express = require('express')
-const cors = require('cors')
-const router = require('./routes/router')
+// Load environment variables
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const router = require('./routes/router');
+require('./database/dbConnection');
 
-require('./database/dbConnection')
-const pfserver = express() //server created
+const pfserver = express(); // Server created
 
+// CORS configuration for deployed frontend
+pfserver.use(cors({
+  origin: 'https://project-fair-nivy-app.netlify.app',
+  credentials: true
+}));
 
-pfserver.use(cors())
+// Optional: Handle preflight requests
+pfserver.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://project-fair-nivy-app.netlify.app');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
-// pfserver.use(cors({ origin: 'http://localhost:5173' }));
+// Middleware
+pfserver.use(express.json());
+pfserver.use(router);
+pfserver.use('/uploads', express.static('./uploads'));
 
-pfserver.use(express.json())
-pfserver.use(router)
-pfserver.use('/uploads',express.static('./uploads'))
+// Port setup
+const PORT = process.env.PORT || 3000;
 
-const PORT = 3000 || process.env.PORT
+// Start server
+pfserver.listen(PORT, () => {
+  console.log(`PFSERVER IS RUNNING ON PORT ${PORT} AND WAITING FOR CLIENT REQUEST`);
+});
 
-pfserver.listen(PORT,()=>{
-    console.log(` PFSERVER IS RUINING ${PORT} AND WAITING for client request`);
-    
-})
-pfserver.get('/',(req,res)=>{
-    res.status(200).send('<h1>my nivyaaa   something</h1>')
-})
-pfserver.post('/',(req,res)=>{
- res.status(200).send("Post nivya Request")
-})
+// Test routes
+pfserver.get('/', (req, res) => {
+  res.status(200).send('<h1>my nivyaaa   something</h1>');
+});
+
+pfserver.post('/', (req, res) => {
+  res.status(200).send("Post nivya Request");
+});
