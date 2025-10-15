@@ -1,51 +1,31 @@
-// Load environment variables
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const router = require('./routes/router');
-require('./database/dbConnection');
+// steps  to define     express server
+//  load 
+require('dotenv').config()
+const express = require('express')
+const cors = require('cors')
+const router = require('./routes/router')
 
-const pfserver = express(); // Server created
+require('./database/dbConnection')
+const pfserver = express() //server created
 
-// Define allowed origins
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://project-fair-nivy-app.netlify.app'
-];
 
-// CORS configuration
-pfserver.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}));
+pfserver.use(cors())
 
-// Handle preflight requests
-pfserver.options('*', cors());
+// pfserver.use(cors({ origin: 'http://localhost:5173' }));
 
-// Middleware
-pfserver.use(express.json());
-pfserver.use(router);
-pfserver.use('/uploads', express.static('./uploads'));
+pfserver.use(express.json())
+pfserver.use(router)
+pfserver.use('/uploads',express.static('./uploads'))
 
-// Port setup
-const PORT = process.env.PORT || 3000;
+const PORT = 3000 || process.env.PORT
 
-// Start server
-pfserver.listen(PORT, () => {
-  console.log(`PFSERVER IS RUNNING ON PORT ${PORT} AND WAITING FOR CLIENT REQUEST`);
-});
-
-// Test routes
-pfserver.get('/', (req, res) => {
-  res.status(200).send('<h1>my nivyaaa   something</h1>');
-});
-
-pfserver.post('/', (req, res) => {
-  res.status(200).send("Post nivya Request");
-});
+pfserver.listen(PORT,()=>{
+    console.log(` PFSERVER IS RUINING ${PORT} AND WAITING for client request`);
+    
+})
+pfserver.get('/',(req,res)=>{
+    res.status(200).send('<h1>my nivyaaa   something</h1>')
+})
+pfserver.post('/',(req,res)=>{
+ res.status(200).send("Post nivya Request")
+})
