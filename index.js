@@ -8,10 +8,10 @@ require('./database/dbConnection');
 const pfserver = express(); // Server created
 
 // CORS configuration for deployed frontend
-pfserver.use(cors({
-  origin: 'https://project-fair-nivy-app.netlify.app',
-  credentials: true
-}));
+// pfserver.use(cors({
+//   origin: 'https://project-fair-nivy-app.netlify.app',
+//   credentials: true
+// }));
 
 // Optional: Handle preflight requests
 pfserver.use((req, res, next) => {
